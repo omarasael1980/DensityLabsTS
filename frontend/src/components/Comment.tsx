@@ -11,12 +11,14 @@ interface CommentProps {
   };
   handleEdit: (id: number) => void;
   handleDelete: (id: number) => void;
+  handleReply: (id: number) => void;
 }
 
 const Comment: React.FC<CommentProps> = ({
   comment,
   handleEdit,
   handleDelete,
+  handleReply,
 }) => {
   return (
     <div className="bg-white w-2/3 rounded shadow-lg p-4 my-4 mx-auto">
@@ -44,7 +46,7 @@ const Comment: React.FC<CommentProps> = ({
         </button>
         <button
           title="Reply"
-          onClick={() => handleDelete(comment.id)}
+          onClick={() => handleReply(comment.id)}
           className="flex px-4 items-center hover:bg-blue-200 hover:transition-colors rounded-sm p-2 border border-blue-400"
         >
           <span className="material-symbols-outlined">reply</span>

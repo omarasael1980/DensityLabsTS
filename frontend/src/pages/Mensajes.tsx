@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import AxiosClient from "../helpers/AxiosClient";
 import Comment from "../components/Comment";
 import Reply from "../components/Reply";
+import RepliesForm from "../components/RepliesForm";
 import swal from "sweetalert2";
 import { AxiosError } from "axios";
 import { Comment as CommentType, DataForm, ErrorAlert } from "../types";
+import React from "react";
 
 const Mensajes: React.FC = () => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [errorAlert, setErrorAlert] = useState<ErrorAlert>({});
   const [reload, setReload] = useState<boolean>(false);
+  const [showRepliesForm, setShowRepliesForm] = useState<boolean>(false);
+
   const [dataForm, setDataForm] = useState<DataForm>({
     comment: "",
     email: "",
@@ -98,6 +102,10 @@ const Mensajes: React.FC = () => {
       });
     }
   };
+  //functios to pass as a prop to the replies
+  const handleReload = () => {
+    setReload(!reload);
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -126,7 +134,7 @@ const Mensajes: React.FC = () => {
     try {
       if (dataForm.id) {
         await AxiosClient.put(`/comments/${dataForm.id}`, dataForm);
-        setReload(!reload);
+        handleReload();
         setDataForm({ email: "", comment: "" });
         setErrorAlert({
           msg: "Comment edited successfully",
@@ -145,7 +153,7 @@ const Mensajes: React.FC = () => {
           error: false,
         });
       }
-      setReload(!reload);
+      handleReload();
     } catch (error) {
       const axiosError = error as AxiosError;
       setErrorAlert({
@@ -158,7 +166,11 @@ const Mensajes: React.FC = () => {
       });
     }
   };
-
+  //region functions to handle replies
+  const handleShowRepliesForm = (id: number) => {
+    console.log("id", id);
+    setShowRepliesForm(!showRepliesForm);
+  };
   if (errorAlert.msg) {
     swal.fire({
       title: errorAlert.title,
@@ -206,26 +218,42 @@ const Mensajes: React.FC = () => {
       <div>
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <div key={comment.id}>
-              <Comment
-                comment={comment}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-              />
-              {comment && (comment.replies ?? []).length > 0 && (
-                <div className="bg-gray-100 w-2/3 rounded shadow-lg p-4 -my-4 mb-4 mx-auto">
-                  Replies:
-                  {comment?.replies?.map((reply) => (
-                    <Reply
-                      key={reply.id}
-                      reply={reply}
-                      handleEdit={handleEdit}
-                      handleDelete={handleDelete}
+            // Agregar una key en el Fragment principal
+            <React.Fragment key={comment.id}>
+              <div>
+                <Comment
+                  comment={comment}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                  handleReply={handleShowRepliesForm}
+                />
+                <div className="w-full flex flex-row justify-center items-center">
+                  {showRepliesForm && (
+                    <RepliesForm
+                      dataform={{
+                        email: "",
+                        reply: "",
+                        replyId: 0,
+                      }}
+                      id={comment.id}
+                      handleReply={() => handleShowRepliesForm(comment.id)}
                     />
-                  ))}
+                  )}
                 </div>
-              )}
-            </div>
+                {comment.replies && comment.replies.length > 0 && (
+                  <div className="bg-gray-100 w-2/3 rounded shadow-lg p-4 -my-4 mb-4 mx-auto">
+                    Replies:
+                    {comment.replies.map((reply) => (
+                      <Reply
+                        key={reply.id} // Asegúrate de que cada `reply` tenga una key única
+                        reply={reply}
+                        handleReload={handleReload}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
+            </React.Fragment>
           ))
         ) : (
           <p>There are no comments</p>
