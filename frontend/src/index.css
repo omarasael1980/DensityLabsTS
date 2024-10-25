@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.dl-menu-style ul.et-menu > li > a:hover:before {
+  bottom: var(--BottomOffset);
+  opacity: 1;
+}
+.dl-menu-style ul.et-menu > li > a:hover {
+  color: #fff;
+}
+.bg-bar-nav {
+  background-color: #fff;
+}
