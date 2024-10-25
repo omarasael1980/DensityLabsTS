@@ -256,7 +256,7 @@ const Mensajes: React.FC = () => {
             </React.Fragment>
           ))
         ) : (
-          <p>There are no comments</p>
+          <p className="text-center text-3xl">There are no comments</p>
         )}
       </div>
       <div className="grid grid-cols-4 justify-center items-center"></div>

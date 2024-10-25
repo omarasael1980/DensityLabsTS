@@ -168,29 +168,29 @@ export const createReply = async (req: Request, res: Response) => {
         title: "Bad request",
         error: true,
       });
-    }
-
-    const commentExist = await prisma.comments.findUnique({
-      where: { id: parseInt(id) },
-    });
-
-    if (!commentExist) {
-      res.status(404).json({
-        msg: "Comment not found",
-        title: "Not found",
-        error: true,
+    } else {
+      const commentExist = await prisma.comments.findUnique({
+        where: { id: parseInt(id) },
       });
+
+      if (!commentExist) {
+        res.status(404).json({
+          msg: "Comment not found",
+          title: "Not found",
+          error: true,
+        });
+      } else {
+        const newReply = await prisma.reply.create({
+          data: { email, reply, commentId: parseInt(id) },
+        });
+
+        res.status(201).json({
+          msg: newReply,
+          title: "Reply created",
+          error: false,
+        });
+      }
     }
-
-    const newReply = await prisma.reply.create({
-      data: { email, reply, commentId: parseInt(id) },
-    });
-
-    res.status(201).json({
-      msg: newReply,
-      title: "Reply created",
-      error: false,
-    });
   } catch (error) {
     res.status(500).json({
       msg: (error as Error).message,
