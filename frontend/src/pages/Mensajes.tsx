@@ -12,7 +12,9 @@ const Mensajes: React.FC = () => {
   const [comments, setComments] = useState<CommentType[]>([]);
   const [errorAlert, setErrorAlert] = useState<ErrorAlert>({});
   const [reload, setReload] = useState<boolean>(false);
-  const [showRepliesForm, setShowRepliesForm] = useState<boolean>(false);
+  const [showRepliesForm, setShowRepliesForm] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   const [dataForm, setDataForm] = useState<DataForm>({
     comment: "",
@@ -33,12 +35,10 @@ const Mensajes: React.FC = () => {
       try {
         const response = await AxiosClient.get("/comments");
         setComments(response.data.msg);
-      } catch (error: unknown) {
-        const axiosError = error as AxiosError;
+      } catch (error: any) {
+        console.log(console.log(error));
         setErrorAlert({
-          msg:
-            (axiosError.response?.data as { msg: string }).msg ||
-            "Unexpected error",
+          msg: "Error fetching comments",
           status: true,
           title: "Error adding comment",
           error: true,
@@ -102,7 +102,8 @@ const Mensajes: React.FC = () => {
       });
     }
   };
-  //functios to pass as a prop to the replies
+
+  // Function to pass as a prop to the replies
   const handleReload = () => {
     setReload(!reload);
   };
@@ -166,11 +167,12 @@ const Mensajes: React.FC = () => {
       });
     }
   };
-  //region functions to handle replies
+
+  // Region functions to handle replies
   const handleShowRepliesForm = (id: number) => {
-    console.log("id", id);
-    setShowRepliesForm(!showRepliesForm);
+    setShowRepliesForm((prev) => ({ ...prev, [id]: !prev[id] }));
   };
+
   if (errorAlert.msg) {
     swal.fire({
       title: errorAlert.title,
@@ -218,7 +220,6 @@ const Mensajes: React.FC = () => {
       <div>
         {comments.length > 0 ? (
           comments.map((comment) => (
-            // Agregar una key en el Fragment principal
             <React.Fragment key={comment.id}>
               <div>
                 <Comment
@@ -228,7 +229,7 @@ const Mensajes: React.FC = () => {
                   handleReply={handleShowRepliesForm}
                 />
                 <div className="w-full flex flex-row justify-center items-center">
-                  {showRepliesForm && (
+                  {showRepliesForm[comment.id] && (
                     <RepliesForm
                       dataform={{
                         email: "",
@@ -245,7 +246,7 @@ const Mensajes: React.FC = () => {
                     Replies:
                     {comment.replies.map((reply) => (
                       <Reply
-                        key={reply.id} // Asegúrate de que cada `reply` tenga una key única
+                        key={reply.id}
                         reply={reply}
                         handleReload={handleReload}
                       />

@@ -14,7 +14,7 @@ app.use(cors(corsOptions));
 const PORT = process.env.PORT || 3000;
 
 app.get("/api/", (req: Request, res: Response) => {
-  res.send("¡Servidor Node con TypeScript funcionando!");
+  res.send("¡Server with TS working!");
 });
 
 app.use("/api/comments", commentsRoutes);

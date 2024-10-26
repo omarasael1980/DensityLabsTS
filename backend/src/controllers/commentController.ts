@@ -156,12 +156,15 @@ export const deleteComment = async (req: Request, res: Response) => {
  */
 export const createReply = async (req: Request, res: Response) => {
   try {
-    const { id, email, reply } = req.body as {
+    let { id, email, reply } = req.body as {
       id: string;
       email: string;
       reply: string;
     };
 
+    email = email.trim();
+    reply = reply.trim();
+    // console.log(id, email, reply);
     if (!id || !email || !reply || email === "" || reply === "") {
       res.status(400).json({
         msg: "All fields are required",
@@ -217,13 +220,13 @@ export const findReply = async (req: Request, res: Response) => {
         title: "Not found",
         error: true,
       });
+    } else {
+      res.status(200).json({
+        msg: reply,
+        title: "Reply found",
+        error: false,
+      });
     }
-
-    res.status(200).json({
-      msg: reply,
-      title: "Reply found",
-      error: false,
-    });
   } catch (error) {
     res.status(500).json({
       msg: (error as Error).message,
@@ -249,32 +252,32 @@ export const updateReply = async (req: Request, res: Response) => {
         title: "Bad request",
         error: true,
       });
-    }
-
-    // Check if reply exists
-    const replyExist = await prisma.reply.findUnique({
-      where: { id: parseInt(id) },
-    });
-
-    if (!replyExist) {
-      res.status(404).json({
-        msg: "Reply not found",
-        title: "Not found",
-        error: true,
+    } else {
+      // Check if reply exists
+      const replyExist = await prisma.reply.findUnique({
+        where: { id: parseInt(id) },
       });
+
+      if (!replyExist) {
+        res.status(404).json({
+          msg: "Reply not found",
+          title: "Not found",
+          error: true,
+        });
+      } else {
+        // Update reply
+        const updatedReply = await prisma.reply.update({
+          where: { id: parseInt(id) },
+          data: { email, reply },
+        });
+
+        res.status(200).json({
+          msg: updatedReply,
+          title: "Reply updated",
+          error: false,
+        });
+      }
     }
-
-    // Update reply
-    const updatedReply = await prisma.reply.update({
-      where: { id: parseInt(id) },
-      data: { email, reply },
-    });
-
-    res.status(200).json({
-      msg: updatedReply,
-      title: "Reply updated",
-      error: false,
-    });
   } catch (error) {
     res.status(500).json({
       msg: (error as Error).message,
@@ -302,17 +305,17 @@ export const deleteReply = async (req: Request, res: Response) => {
         title: "Not found",
         error: true,
       });
+    } else {
+      await prisma.reply.delete({
+        where: { id: parseInt(id) },
+      });
+
+      res.status(200).json({
+        msg: "Reply deleted successfully",
+        title: "Reply deleted",
+        error: false,
+      });
     }
-
-    await prisma.reply.delete({
-      where: { id: parseInt(id) },
-    });
-
-    res.status(200).json({
-      msg: "Reply deleted successfully",
-      title: "Reply deleted",
-      error: false,
-    });
   } catch (error) {
     res.status(500).json({
       msg: (error as Error).message,

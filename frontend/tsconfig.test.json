@@ -1,0 +1,11 @@
+// tsconfig.test.json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vitest", "@testing-library/jest-dom"],
+    "module": "ESNext",
+    "target": "ESNext",
+    "lib": ["DOM", "ESNext"]
+  },
+  "include": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+}
