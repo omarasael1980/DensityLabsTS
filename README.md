@@ -19,10 +19,12 @@ It is developed with Node, Express, Prisma, MySQL, Jest and TS in the backend, w
 > JWT_SECRET=D3nsityL4bs
 > ```
 
-JWT_SECRET=D3nsityL4bs
-
-4. In Frontend make an .env file
-
-   VITE_BACKEND_URL = http://localhost:4100
+> ### Configuración del Frontend
+>
+> En la carpeta `frontend`, crea un archivo `.env` y agrega las siguientes variables de entorno:
+>
+> ```env
+>   VITE_BACKEND_URL = http://localhost:4100
+> ```
 
 5. When you test the backend at the end it will restore the DB (all data will be erased)
