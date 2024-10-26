@@ -9,9 +9,9 @@ It is developed with Node, Express, Prisma, MySQL, Jest and TS in the backend, w
 1. Clone this repository
 2. npm i (in frontend and backend)
 
-> ### Configuración del Backend
+> ### Backend Configuration
 >
-> En la carpeta `backend`, crea un archivo `.env` y agrega las siguientes variables de entorno:
+> Enter to `backend` carpet, make `.env` file and add this:
 >
 > ```env
 > PORT=4100
@@ -19,12 +19,15 @@ It is developed with Node, Express, Prisma, MySQL, Jest and TS in the backend, w
 > JWT_SECRET=D3nsityL4bs
 > ```
 
-> ### Configuración del Frontend
+> ### Frontend Configuration
 >
-> En la carpeta `frontend`, crea un archivo `.env` y agrega las siguientes variables de entorno:
+> Entrer to`frontend` carpet, make `.env` file y add this variable:
 >
 > ```env
 >   VITE_BACKEND_URL = http://localhost:4100
 > ```
 
-5. When you test the backend at the end it will restore the DB (all data will be erased)
+## Testing
+
+> I used Jest to make the backend test
+> When you test the backend at the end it will restore the DB (all data will be erased)
